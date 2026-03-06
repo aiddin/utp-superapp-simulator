@@ -1,5 +1,5 @@
 import { getState, subscribe, setState, addLogEntry } from './core/state.js';
-import { initBridge } from './core/bridge.js';
+import { initBridge, sendContextToFrame } from './core/bridge.js';
 import { MOCK_USERS } from './core/mock-users.js';
 import { renderToolbar } from './components/Toolbar.js';
 import { renderPhoneFrame } from './components/PhoneFrame.js';
@@ -162,15 +162,10 @@ class SimulatorApp {
     if (chromeSub) chromeSub.textContent = url;
 
     // URL Rewriting for Proxy (Fix for Oracle APEX Redirect Loop)
-    // Note: Proxy only works in development mode (vite dev), not on GitHub Pages
     let processedUrl = url;
-    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-    if (url.includes('oracleapex.com/ords') && isDevelopment) {
+    if (url.includes('oracleapex.com/ords')) {
       processedUrl = url.replace(/https?:\/\/oracleapex.com/, '');
-      addLogEntry('info', '🛰️', `Proxy active (dev mode): Rewrote to ${processedUrl}`);
-    } else if (url.includes('oracleapex.com/ords') && !isDevelopment) {
-      addLogEntry('warning', '⚠️', 'APEX proxy not available in production. Loading direct URL (may have CORS issues).');
+      addLogEntry('info', '🛰️', `Proxy active: Rewrote to ${processedUrl}`);
     }
 
     addLogEntry('info', 'ℹ️', `Requesting: ${processedUrl}`);
@@ -186,7 +181,6 @@ class SimulatorApp {
       __SUPERAPP_TOKEN__: user.token,
       __SUPERAPP_ROLE__: user.role
     });
-    frame.name = contextPayload;
     addLogEntry('info', 'ℹ️', `Context injected via window.name for ${user.name} (${user.role})`);
 
     if (frame) {
@@ -196,18 +190,39 @@ class SimulatorApp {
       newFrame.id = 'mini-app-frame';
       newFrame.allow = frame.allow;
       newFrame.referrerPolicy = frame.referrerPolicy;
-      newFrame.name = frame.name;
-      
+
+      // Set window.name on the NEW frame BEFORE setting src
+      // This ensures context is available when the page loads
+      newFrame.name = contextPayload;
+
       parent.replaceChild(newFrame, frame);
 
       newFrame.onload = () => {
+        // Send context via postMessage (works for all cross-origin/nested iframes)
+        // Use a small delay to ensure SDK has loaded
+        setTimeout(() => {
+          sendContextToFrame(user);
+        }, 100);
+
+        // Also try window.name as fallback (for compatibility)
+        try {
+          newFrame.contentWindow.name = contextPayload;
+          newFrame.contentWindow.__SUPERAPP_USER__ = user;
+          newFrame.contentWindow.__SUPERAPP_TOKEN__ = user.token;
+          newFrame.contentWindow.__SUPERAPP_ROLE__ = user.role;
+          addLogEntry('info', '🔧', 'Injected context via window variables (same-origin)');
+        } catch (e) {
+          // Cross-origin: postMessage is the primary method
+          addLogEntry('info', 'ℹ️', 'Cross-origin detected, using postMessage for context');
+        }
+
         if (overlay) overlay.style.display = 'none';
         if (chromeTitle && chromeTitle.textContent === 'Loading...') {
           chromeTitle.textContent = 'Mini-App';
         }
         addLogEntry('ok', '✓', 'Mini-App Navigation Complete');
       };
-      
+
       newFrame.src = processedUrl;
     }
   }

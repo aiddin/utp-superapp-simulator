@@ -136,6 +136,21 @@
     var data = event.data;
     if (!data || typeof data !== 'object') return;
 
+    // Shell → Mini-App: context injection (for cross-origin/nested iframes)
+    if (data.action === 'CONTEXT_INJECT' && data.context) {
+      // Update global context variables that were missed during initial load
+      if (data.context.__SUPERAPP_USER__) {
+        global.__SUPERAPP_USER__ = data.context.__SUPERAPP_USER__;
+      }
+      if (data.context.__SUPERAPP_TOKEN__) {
+        global.__SUPERAPP_TOKEN__ = data.context.__SUPERAPP_TOKEN__;
+      }
+      if (data.context.__SUPERAPP_ROLE__) {
+        global.__SUPERAPP_ROLE__ = data.context.__SUPERAPP_ROLE__;
+      }
+      return;
+    }
+
     // Shell → Mini-App: shell lifecycle events
     if (data.action === 'SHELL_EVENT') {
       var eventName = data.event;

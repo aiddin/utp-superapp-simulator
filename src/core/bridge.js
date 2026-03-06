@@ -59,9 +59,27 @@ export function sendToFrame(msg) {
 }
 
 /**
+ * Send user context to Mini-App via postMessage.
+ * This is more reliable than window.name for cross-origin/nested iframes.
+ * @param {object} user - Mock user object
+ */
+export function sendContextToFrame(user) {
+  const msg = {
+    action: 'CONTEXT_INJECT',
+    context: {
+      __SUPERAPP_USER__: user,
+      __SUPERAPP_TOKEN__: user.token,
+      __SUPERAPP_ROLE__: user.role
+    }
+  };
+  sendToFrame(msg);
+  addLogEntry('info', '📨', `Context sent via postMessage: ${user.name} (${user.role})`);
+}
+
+/**
  * Simulate a Shell → Mini-App lifecycle event.
  * @param {string} eventName - 'notification' | 'logout' | 'themeChange' | 'resume'
- * @param {*} payload 
+ * @param {*} payload
  */
 export function simulateShellEvent(eventName, payload) {
   const msg = {

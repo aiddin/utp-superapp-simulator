@@ -6,6 +6,6 @@
  */
 
 export function getSDKUrl() {
-  // Vite serves public/ files from root, and handles base path automatically
+  // Vite serves public/ files from root
   return '/superapp.js';
 }
