@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTP Room Booking — Demo Mini-App</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --blue: #005EB8;
+      --blue-dark: #003d7a;
+      --bg: #f9fafb;
+      --surface: #ffffff;
+      --border: #e5e7eb;
+      --text: #111827;
+      --muted: #6b7280;
+    }
+
+    body { 
+      font-family: 'Inter', sans-serif; 
+      padding: 16px; 
+      background: var(--bg); 
+      color: var(--text); 
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .header { margin-bottom: 24px; }
+    h1 { font-size: 1.25rem; font-weight: 800; margin: 0; color: var(--blue-dark); }
+    .subtitle { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+    .user-info {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .avatar {
+      width: 36px; height: 36px;
+      background: var(--blue);
+      color: white;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+    }
+
+    .user-meta { flex: 1; }
+    .user-name { font-size: 0.85rem; font-weight: 700; }
+    .user-role { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .section-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 20px 0 12px 4px;
+    }
+
+    .card { 
+      background: var(--surface); 
+      padding: 16px; 
+      border-radius: 12px; 
+      border: 1px solid var(--border); 
+      margin-bottom: 12px;
+    }
+
+    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .btn { 
+      background: var(--blue); 
+      color: white; 
+      border: none; 
+      padding: 10px 16px; 
+      border-radius: 8px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      font-size: 0.8rem; 
+      transition: all 0.2s;
+    }
+
+    .btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+    .btn:active { transform: translateY(0); }
+    .btn-secondary { background: #e5e7eb; color: var(--text); }
+    .btn-secondary:hover { background: #d1d5db; }
+
+    .result { 
+      margin-top: 12px; 
+      padding: 10px; 
+      background: #f3f4f6; 
+      border-radius: 8px; 
+      font-family: 'Courier New', monospace; 
+      font-size: 0.7rem; 
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    /* Event Badge */
+    .event-log {
+      font-size: 0.65rem;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #d1fae5;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🗓️ Room Booking</h1>
+    <div class="subtitle">UTP Campus Mini-App Demo</div>
+  </div>
+
+  <div class="user-info">
+    <div class="avatar" id="user-avatar">?</div>
+    <div class="user-meta">
+      <div class="user-name" id="user-display">Loading session...</div>
+      <div class="user-role" id="user-role-display">---</div>
+    </div>
+  </div>
+
+  <div class="section-title">Common Actions</div>
+  <div class="card">
+    <div class="btn-group">
+      <button class="btn" onclick="testToast()">Show Toast</button>
+      <button class="btn btn-secondary" onclick="testLoading()">Full Loading</button>
+      <button class="btn btn-secondary" onclick="testQR()">Scan QR</button>
+    </div>
+  </div>
+
+  <div class="section-title">Profile Data</div>
+  <div class="card">
+    <button class="btn" onclick="testGetUser()">Inspect JSON Profile</button>
+    <div id="auth-result" class="result">Request profile context...</div>
+  </div>
+
+  <div class="section-title">Shell Events</div>
+  <div id="event-badge" class="event-log">Waiting for events...</div>
+
+  <!-- Load SDK -->
+  <script src="https://syauchi.github.io/sdk-superapp/superapp.js"></script>
+  <script>
+    async function init() {
+      if (window.SuperApp) {
+        const user = await SuperApp.auth.getUser();
+        const role = await SuperApp.auth.getRole();
+        
+        document.getElementById('user-display').textContent = user.name;
+        document.getElementById('user-role-display').textContent = role;
+        document.getElementById('user-avatar').textContent = user.name.charAt(0);
+        
+        SuperApp.ui.showToast('Protocol Link established 🚀');
+
+        // Listen for back button
+        SuperApp.on('go-back', () => {
+          alert('Shell requested go-back! Cleaning up...');
+        });
+      }
+    }
+
+    async function testGetUser() {
+      const user = await SuperApp.auth.getUser();
+      document.getElementById('auth-result').textContent = JSON.stringify(user, null, 2);
+    }
+
+    function testToast() {
+      SuperApp.ui.showToast('Action confirmed in Shell! 🎉');
+    }
+
+    function testLoading() {
+      SuperApp.ui.showLoading();
+      setTimeout(SuperApp.ui.hideLoading, 2000);
+    }
+
+    async function testQR() {
+      const res = await SuperApp.camera.scanQR();
+      alert('QR Data Received: ' + res.data);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

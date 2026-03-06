@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UTP Super App — Mini-App Simulator v2.0</title>
+  <link rel="stylesheet" href="/src/styles/index.css" />
+</head>
+<body>
+  <div id="simulator-root">
+    <!-- Toolbar -->
+    <header class="toolbar" id="toolbar-container"></header>
+
+    <main class="main-layout">
+      <!-- Phone column -->
+      <section class="phone-column" id="phone-container"></section>
+
+      <!-- Resize Handle -->
+      <div class="resize-handle" id="resize-handle"></div>
+
+      <!-- Right Panel (Context + Logs) -->
+      <aside class="side-panel" id="side-panel">
+        <div id="context-card-container"></div>
+        <div id="location-card-container"></div>
+
+        <nav class="log-filters" id="log-filters-container"></nav>
+
+        <div class="log-list-wrapper">
+          <header class="log-header" id="log-header-container"></header>
+          <div class="log-body" id="log-body"></div>
+        </div>
+
+        <footer class="version-bar" id="version-bar-container"></footer>
+      </aside>
+    </main>
+  </div>
+
+  <!-- QR Scanner Modal -->
+  <div class="camera-modal" id="qr-modal" style="display:none">
+    <div class="camera-modal-content qr-modal-content">
+      <div class="camera-modal-header">
+        <span>📷 QR Scanner — Enter Link</span>
+        <button class="btn-icon" id="btn-qr-close" title="Cancel">✕</button>
+      </div>
+      <div class="qr-input-zone">
+        <div class="qr-icon-area">
+          <svg class="qr-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="3" height="3" />
+            <rect x="18" y="18" width="3" height="3" />
+            <rect x="18" y="14" width="3" height="1" />
+            <rect x="14" y="18" width="1" height="3" />
+          </svg>
+        </div>
+        <p class="qr-hint">Paste the link a QR code would contain</p>
+        <input type="text" id="qr-link-input" class="qr-link-input" placeholder="https://example.com/resource" autocomplete="off" spellcheck="false" />
+      </div>
+      <div class="camera-modal-actions">
+        <button class="btn-secondary" id="btn-qr-cancel">Cancel</button>
+        <button class="btn-primary" id="btn-qr-send" disabled>Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Camera Modal -->
+  <div class="camera-modal" id="camera-modal" style="display:none">
+    <div class="camera-modal-content">
+      <div class="camera-modal-header">
+        <span>📷 Camera — Pick a Photo</span>
+        <button class="btn-icon" id="btn-camera-close" title="Cancel">✕</button>
+      </div>
+      <div class="camera-drop-zone" id="camera-drop-zone">
+        <input type="file" id="camera-file-input" accept="image/*" hidden />
+        <div class="camera-drop-prompt">
+          <span class="camera-drop-icon">📁</span>
+          <p>Drag & drop an image here</p>
+          <p class="camera-drop-sub">or click to browse</p>
+        </div>
+        <img id="camera-preview" class="camera-preview" style="display:none" />
+      </div>
+      <div class="camera-modal-actions">
+        <button class="btn-secondary" id="btn-camera-cancel">Cancel</button>
+        <button class="btn-primary" id="btn-camera-send" disabled>Send to App</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Overlays -->
+  <div id="overlay-container"></div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
