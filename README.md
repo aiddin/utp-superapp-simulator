@@ -2,12 +2,6 @@
 
 A powerful, modular web-based simulator for developing and testing mini-apps against the `SuperApp` SDK.
 
-## 🌐 Live Demo
-
-**[Try it now at GitHub Pages](https://aiddin.github.io/utp-superapp-simulator/)**
-
-The simulator is automatically deployed to GitHub Pages on every push to the `main` branch.
-
 ## 🚀 Enhancements (v2.0)
 
 - **Vite-Powered**: Fast development with Hot Module Replacement (HMR).
@@ -38,8 +32,19 @@ npm run dev
 
 - `src/core/`: The "Brain" (State, Bridge logic, Mock Data).
 - `src/components/`: Reusable UI modules (Toolbar, Phone Frame, Log Panel).
-- `public/`: Static assets, including the mock `superapp.js` SDK.
+- `public/`: Static assets, including the `superapp.js` SDK (v1.0 with cross-origin APEX support).
 - `demo/`: A sample mini-app to verify SDK functionality.
+
+## 📦 Included SDK
+
+The simulator includes a local copy of the Super App SDK (`public/superapp.js`) with enhanced cross-origin support for Oracle APEX integration. This SDK:
+
+- Supports cross-origin iframe communication via `window.name`
+- Works with both Flutter Shell and Web Simulator environments
+- Includes full postMessage bridge for Shell services
+- Handles APEX redirect scenarios correctly
+
+Mini-apps loaded in the simulator automatically have access to this SDK.
 
 ## 🧪 Bridge Actions Supported
 
@@ -91,39 +96,3 @@ The Log Panel captures all SDK activity in real-time:
 - **🔔 Event** — Notification-related actions
 
 Filter by category using the log filter buttons.
-
-## 🚀 Deployment
-
-### Automatic Deployment (GitHub Pages)
-
-This simulator is automatically deployed to GitHub Pages when changes are pushed to the `main` branch. The deployment is handled by GitHub Actions.
-
-**Live URL**: https://aiddin.github.io/utp-superapp-simulator/
-
-### Manual Deployment
-
-To deploy manually:
-
-```bash
-# Build the project
-npm run build
-
-# The dist/ folder contains the production build
-# You can deploy this to any static hosting service
-```
-
-### Local Development vs Production
-
-- **Development**: Run `npm run dev` - uses root path `/`
-- **Production**: Deployed build uses base path `/utp-superapp-simulator/`
-
-### Oracle APEX Proxy Limitation
-
-The simulator includes a Vite proxy for Oracle APEX (`oracleapex.com/ords`) that **only works in development mode**.
-
-- **Development** (`npm run dev`): Proxy enabled, APEX apps work without CORS issues
-- **Production** (GitHub Pages): No proxy available, APEX apps load directly (may encounter CORS restrictions)
-
-For testing APEX applications on the live GitHub Pages deployment, ensure your APEX instance has appropriate CORS headers configured, or use the local development server.
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.

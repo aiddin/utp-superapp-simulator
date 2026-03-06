@@ -1,9 +1,11 @@
 /**
- * SDK CDN URL Resolver
+ * SDK URL Resolver
  *
- * Returns the CDN-hosted superapp.js URL.
+ * Returns the local superapp.js URL (served from public/ folder).
+ * The local SDK includes cross-origin support for APEX integration.
  */
 
 export function getSDKUrl() {
-  return 'https://syauchi.github.io/sdk-superapp/superapp.js';
+  // Vite serves public/ files from root, and handles base path automatically
+  return '/superapp.js';
 }
