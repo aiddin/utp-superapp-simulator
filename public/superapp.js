@@ -141,6 +141,7 @@
       // Update global context variables that were missed during initial load
       if (data.context.__SUPERAPP_USER__) {
         global.__SUPERAPP_USER__ = data.context.__SUPERAPP_USER__;
+        console.log('[SuperApp SDK] Context injected via postMessage:', data.context.__SUPERAPP_USER__);
       }
       if (data.context.__SUPERAPP_TOKEN__) {
         global.__SUPERAPP_TOKEN__ = data.context.__SUPERAPP_TOKEN__;

@@ -199,10 +199,15 @@ class SimulatorApp {
 
       newFrame.onload = () => {
         // Send context via postMessage (works for all cross-origin/nested iframes)
-        // Use a small delay to ensure SDK has loaded
+        // Use delay to ensure SDK has loaded and is listening
         setTimeout(() => {
           sendContextToFrame(user);
-        }, 100);
+        }, 500);
+
+        // Send again after MINI_APP_READY in case of APEX redirects
+        setTimeout(() => {
+          sendContextToFrame(user);
+        }, 2000);
 
         // Also try window.name as fallback (for compatibility)
         try {
