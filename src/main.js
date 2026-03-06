@@ -162,10 +162,15 @@ class SimulatorApp {
     if (chromeSub) chromeSub.textContent = url;
 
     // URL Rewriting for Proxy (Fix for Oracle APEX Redirect Loop)
+    // Note: Proxy only works in development mode (vite dev), not on GitHub Pages
     let processedUrl = url;
-    if (url.includes('oracleapex.com/ords')) {
+    const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+    if (url.includes('oracleapex.com/ords') && isDevelopment) {
       processedUrl = url.replace(/https?:\/\/oracleapex.com/, '');
-      addLogEntry('info', '🛰️', `Proxy active: Rewrote to ${processedUrl}`);
+      addLogEntry('info', '🛰️', `Proxy active (dev mode): Rewrote to ${processedUrl}`);
+    } else if (url.includes('oracleapex.com/ords') && !isDevelopment) {
+      addLogEntry('warning', '⚠️', 'APEX proxy not available in production. Loading direct URL (may have CORS issues).');
     }
 
     addLogEntry('info', 'ℹ️', `Requesting: ${processedUrl}`);

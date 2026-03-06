@@ -117,4 +117,13 @@ npm run build
 - **Development**: Run `npm run dev` - uses root path `/`
 - **Production**: Deployed build uses base path `/utp-superapp-simulator/`
 
+### Oracle APEX Proxy Limitation
+
+The simulator includes a Vite proxy for Oracle APEX (`oracleapex.com/ords`) that **only works in development mode**.
+
+- **Development** (`npm run dev`): Proxy enabled, APEX apps work without CORS issues
+- **Production** (GitHub Pages): No proxy available, APEX apps load directly (may encounter CORS restrictions)
+
+For testing APEX applications on the live GitHub Pages deployment, ensure your APEX instance has appropriate CORS headers configured, or use the local development server.
+
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.

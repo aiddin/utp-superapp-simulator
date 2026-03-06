@@ -315,7 +315,11 @@ GitHub Pages serves all content over HTTPS automatically.
 
 ### CORS
 
-The simulator uses client-side only code. No CORS configuration needed.
+The simulator uses client-side only code. No CORS configuration needed for the simulator itself.
+
+**Note on Oracle APEX Integration**: The development server includes a proxy for Oracle APEX that bypasses CORS restrictions. This proxy is NOT available on GitHub Pages. If you need to test APEX applications on the live deployment:
+- Configure your APEX instance to allow CORS from `aiddin.github.io`
+- Or use the local development server (`npm run dev`) for APEX testing
 
 ---
 
